@@ -1,7 +1,9 @@
 class Api::V1::ExercisesController < ApplicationController
+  before_action :set_exercise, only: %i[show destroy]
+
   def index
-    exercise = Exercise.all.order(created_at: :desc)
-    render json: exercise
+    exercises = Exercise.all.order(created_at: :desc)
+    render json: exercises
   end
 
   def create
@@ -14,13 +16,20 @@ class Api::V1::ExercisesController < ApplicationController
   end
 
   def show
+    render json: @exercise
   end
 
   def destroy
+    @exercise&.destroy
+    render json: { message: 'Exercise deleted!' }
   end
 
   private
   def exercise_params
     params.permit(:name, :image, :trainings, :instruction)
+  end
+
+  def set_exercise
+    @exercise = Exercise.find(params[:id])
   end
 end
